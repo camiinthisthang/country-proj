@@ -11,21 +11,35 @@ import Typography from '@material-ui/core/Typography';
 const useStyles = makeStyles({
   root: {
     minWidth: 275,
+    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+    border: "22px",
+    borderColor: "white",
+    color: 'white',
   },
   bullet: {
     display: 'inline-block',
     margin: '0 2px',
     transform: 'scale(0.8)',
   },
+  top: {
+    background: 'white',
+    border: "5px",
+    marginBottom: 20,
+  },
   title: {
-    fontSize: 14,
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  button:{
+    margin: 15,
+    marginTop: 40
   },
   pos: {
     marginBottom: 12,
   },
 });
 
-const BASE_URL = 'https://restcountries.eu/rest/v2/all';
+const BASE_URL = 'https://restcountries.eu/rest/v2/all?fields=name;capital;region;population';
 
 export default function ListCountries(){
     const classes = useStyles();
@@ -33,9 +47,9 @@ export default function ListCountries(){
     const [loading, setLoading] = useState(true)
 
     const getCountires = async () => {
-        console.log("function is getting callsed");
         const respCountries = await axios.get(`${BASE_URL}`)
-        console.log("response", respCountries);
+        let countryList = respCountries.data
+        setCountries(countryList);
         setLoading(false);
     }
 
@@ -43,34 +57,54 @@ export default function ListCountries(){
         console.log("inside useffect");
           setLoading(true);
           getCountires();
-
       }, []);
 
-    //   if (countries === null){
-    //       return null;
-    //   }
+      const filterBy = (e) => {
+        console.log("e target value", e.target.value)
+        let filterTerm = e.target.value;
+        console.log("whats filterTerm", filterTerm)
+        setCountries(countries.filter(country => console.log(country.region)));
+      }
+
+      if (countries === null){
+        console.log("countries is null so im not rendering")
+          return null;
+      } 
+      console.log(countries)
     return (
-        <Card className={classes.root}>
-      <CardContent>
-        <Typography className={classes.title} color="textSecondary" gutterBottom>
-          Word of the Day
-        </Typography>
-        <Typography variant="h5" component="h2">
-          Blha blha blha
-        </Typography>
-        <Typography className={classes.pos} color="textSecondary">
-          adjective
-        </Typography>
-        <Typography variant="body2" component="p">
-          well meaning and kindly.
-          <br />
-          {'"a benevolent smile"'}
-        </Typography>
-      </CardContent>
-      <CardActions>
-        <Button size="small">Learn More</Button>
-      </CardActions>
-    </Card>
+        <div>
+            <div className = {classes.top}>
+            <Button className = {classes.button} variant="contained" value="Asia" onClick={(e) => filterBy(e)}>Asia</Button>
+            <Button className = {classes.button} variant="contained" value="Africa" onClick={(e) => filterBy(e)}>Africa</Button>
+            <Button className = {classes.button} variant="contained" value="Europe" onClick={(e) => filterBy(e)}>Europe</Button>
+            <Button className = {classes.button} variant="contained" value="Oceania" onClick={(e) => filterBy(e)}>Oceania</Button>
+            <Button className = {classes.button} variant="contained" value="Americas" onClick={(e) => filterBy(e)}>Americas</Button>
+            <Button className = {classes.button} variant="contained">Polar</Button>
+            </div>
+            <div className = {classes.root}>
+            {countries.map((item, index) => (
+                <Card className={classes.root}>
+                <CardContent>
+                  <Typography className={classes.title} color="textSecondary" gutterBottom>
+                    {item.region}
+                  </Typography>
+                  <Typography variant="h5" component="h2">
+                  {item.name}
+                  </Typography>
+                  <Typography className={classes.pos} color="textSecondary">
+                    {item.capital}
+                  </Typography>
+                  <Typography variant="body2" component="p">
+                    Population: {item.population}
+                    <br />
+                  </Typography>
+                </CardContent>
+              </Card>
+            ))}
+
+            </div>
+                
+        </div>
     );
 
 }
