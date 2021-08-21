@@ -44,12 +44,15 @@ const BASE_URL = 'https://restcountries.eu/rest/v2/all?fields=name;capital;regio
 export default function ListCountries(){
     const classes = useStyles();
     const [countries, setCountries] = useState(null);
-    const [loading, setLoading] = useState(true)
+    const [allCountries, setAllCountries] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [total, setTotal] = useState(0);
 
     const getCountires = async () => {
         const respCountries = await axios.get(`${BASE_URL}`)
         let countryList = respCountries.data
         setCountries(countryList);
+        setAllCountries(countryList);
         setLoading(false);
     }
 
@@ -59,12 +62,16 @@ export default function ListCountries(){
           getCountires();
       }, []);
 
-      const filterBy = (e) => {
-        console.log("e target value", e.target.value)
-        let filterTerm = e.target.value;
-        console.log("whats filterTerm", filterTerm)
-        setCountries(countries.filter(country => console.log(country.region)));
+      const filterBy = (region) => {
+        if(region === ""){
+          setCountries(allCountries);
+        } else {
+          let filterTerm = region;
+          console.log("whats filterTerm", filterTerm)
+          setCountries(allCountries.filter(country => country.region === filterTerm));
+        }
       }
+
 
       if (countries === null){
         console.log("countries is null so im not rendering")
@@ -74,12 +81,13 @@ export default function ListCountries(){
     return (
         <div>
             <div className = {classes.top}>
-            <Button className = {classes.button} variant="contained" value="Asia" onClick={(e) => filterBy(e)}>Asia</Button>
-            <Button className = {classes.button} variant="contained" value="Africa" onClick={(e) => filterBy(e)}>Africa</Button>
-            <Button className = {classes.button} variant="contained" value="Europe" onClick={(e) => filterBy(e)}>Europe</Button>
-            <Button className = {classes.button} variant="contained" value="Oceania" onClick={(e) => filterBy(e)}>Oceania</Button>
-            <Button className = {classes.button} variant="contained" value="Americas" onClick={(e) => filterBy(e)}>Americas</Button>
-            <Button className = {classes.button} variant="contained">Polar</Button>
+            <Button className = {classes.button} variant="contained" value="Asia" onClick={(e)=> filterBy("Asia")}>Asia</Button>
+            <Button className = {classes.button} variant="contained" value="Africa" onClick={(e)=> filterBy("Africa")}>Africa</Button>
+            <Button className = {classes.button} variant="contained" value="Europe" onClick={(e)=> filterBy("Europe")}>Europe</Button>
+            <Button className = {classes.button} variant="contained" value="Oceania" onClick={(e)=> filterBy("Oceania")}>Oceania</Button>
+            <Button className = {classes.button} variant="contained" value="Americas" onClick={(e)=> filterBy("Americas")}>Americas</Button>
+            <Button className = {classes.button} variant="contained" onClick={(e)=> filterBy("Polar")}>Polar</Button>
+            <Button className = {classes.button} variant="contained" onClick={(e)=> filterBy("")}>Reset</Button>
             </div>
             <div className = {classes.root}>
             {countries.map((item, index) => (
