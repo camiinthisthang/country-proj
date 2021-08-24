@@ -63,14 +63,28 @@ export default function ListCountries(){
       }, []);
 
       const filterBy = (region) => {
+        var count = 0;
+        console.log("starting count", count);
         if(region === ""){
           setCountries(allCountries);
         } else {
           let filterTerm = region;
           console.log("whats filterTerm", filterTerm)
           setCountries(allCountries.filter(country => country.region === filterTerm));
+          console.log("what are the countries here!!", countries.length);
+          countries.forEach(function(element, i) { 
+            count++;
+            });
+          console.log("ending count", count);
         }
       }
+
+      // const getCountryTotals = () => {
+      //   let tempCounter = 0;
+      //   countries.forEach(tempCounter = tempCounter + 1)
+      //   console.log("tempCounter", tempCounter);
+      //   return tempCounter;
+      // }
 
 
       if (countries === null){
