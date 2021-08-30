@@ -3,7 +3,6 @@ import {useState, useEffect} from 'react';
 import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
@@ -45,51 +44,34 @@ export default function ListCountries(){
     const classes = useStyles();
     const [countries, setCountries] = useState(null);
     const [allCountries, setAllCountries] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [total, setTotal] = useState(0);
 
     const getCountires = async () => {
         const respCountries = await axios.get(`${BASE_URL}`)
         let countryList = respCountries.data
         setCountries(countryList);
         setAllCountries(countryList);
-        setLoading(false);
     }
 
       useEffect(() => {
-        console.log("inside useffect");
-          setLoading(true);
           getCountires();
       }, []);
 
-      const filterBy = (region) => {
-        var count = 0;
-        console.log("starting count", count);
-        if(region === ""){
-          setCountries(allCountries);
-        } else {
-          let filterTerm = region;
-          console.log("whats filterTerm", filterTerm)
-          setCountries(allCountries.filter(country => country.region === filterTerm));
-          console.log("what are the countries here!!", countries.length);
-          countries.forEach(function(element, i) { 
-            count++;
-            });
-          console.log("ending count", count);
-        }
-      }
-
-      // const getCountryTotals = () => {
-      //   let tempCounter = 0;
-      //   countries.forEach(tempCounter = tempCounter + 1)
-      //   console.log("tempCounter", tempCounter);
-      //   return tempCounter;
+      // const filterBy = (region) => {
+      //   if(region === ""){
+      //     setCountries(allCountries);
+      //   } else {
+      //     setCountries(allCountries.filter(country => country.region === region));
+      //   }
       // }
+
+      const filterBy = (region) => {
+        !region ? setCountries(allCountries) :  setCountries(allCountries.filter(country => country.region === region)); 
+      }
 
 
       if (countries === null){
         console.log("countries is null so im not rendering")
-          return null;
+          return "LOADING";
       } 
       console.log(countries)
     return (
